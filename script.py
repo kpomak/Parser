@@ -1,4 +1,4 @@
-from core import Parser
+from app.core import Parser
 
 
 if __name__ == "__main__":
