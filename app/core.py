@@ -1,6 +1,7 @@
 from openpyxl import load_workbook
 from datetime import date
 from sys import argv
+from random import choice
 
 from app.conf import *
 from app.database import Storage
@@ -12,7 +13,7 @@ class ExcelParser:
 
     def parse_excel(self):
         try:
-            file_name = "file.xlsx"  ############# argv[1]
+            file_name = argv[1]
             workbook = load_workbook(file_name)
         except FileNotFoundError:
             print("Файл не найден.")
@@ -24,7 +25,6 @@ class ExcelParser:
         worksheet = workbook.active
         worksheet = worksheet[TABLE_HEADER : worksheet.max_row]
 
-        day_of_month = (date(2023, 1, day) for day in range(1, 32))
         for row in worksheet:
             item = {
                 "company": row[COMPANY].value,
@@ -36,7 +36,7 @@ class ExcelParser:
                 "forecast_qliq_2": row[FORECAST_QLIQ_2].value,
                 "forecast_qoil_1": row[FORECAST_QOIL_1].value,
                 "forecast_qoil_2": row[FORECAST_QOIL_2].value,
-                "date": next(day_of_month),
+                "date": date(2023, 1, choice(DAYS)),
             }
             self.data.append(item)
 

@@ -10,4 +10,6 @@ FORECAST_QOIL_2 = 9
 
 TABLE_HEADER = 4
 
-DEBUG = True
+DEBUG = False
+
+DAYS = list(range(1, 11))
