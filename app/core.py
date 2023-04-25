@@ -8,10 +8,23 @@ from app.database import Storage
 
 
 class ExcelParser:
+    """
+    Класс отвечает за обработку Excel-файла.
+    """
     def __init__(self):
         self.data = []
 
     def parse_excel(self):
+        """
+        Метод получает из параметров командной строки имя файла.
+        Заполняет список data словарями, содержащими
+        данные отдельных строк файла.
+        """
+
+        # Очищаем список от предыдущих данных, если бы они были
+        self.data.clear()
+
+        # Открываем файл, иначе выходим с ошибкой
         try:
             file_name = argv[1]
             workbook = load_workbook(file_name)
@@ -22,9 +35,11 @@ class ExcelParser:
             print("Произошла ошибка")
             exit(1)
 
+        # Выбираем текущий лист документа и пропускаем шапку
         worksheet = workbook.active
         worksheet = worksheet[TABLE_HEADER : worksheet.max_row]
 
+        # Парсим ячейки в соответствии с настройками из conf.py
         for row in worksheet:
             item = {
                 "company": row[COMPANY].value,
@@ -42,12 +57,14 @@ class ExcelParser:
 
 
 class Parser(ExcelParser):
+    """
+    Класс отвечает за сохранение данных в бд и вычисление сумм
+    """
     def __init__(self):
         super().__init__()
         self.db = Storage()
 
-    def parse_excel(self):
-        super().parse_excel()
+    def save_to_db(self):
         self.db.save_data(self.data)
         self.db.calculate_sum()
 
@@ -55,3 +72,4 @@ class Parser(ExcelParser):
 if __name__ == "__main__":
     file = Parser()
     file.parse_excel()
+    file.save_to_db()
